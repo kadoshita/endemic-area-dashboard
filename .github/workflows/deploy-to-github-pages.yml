@@ -16,10 +16,10 @@ jobs:
       env:
         TZ: Asia/Tokyo
       run: |
+        yarn install
         node app.js
     - name: Install and Build
       run: |
-        yarn install
         yarn build
         mkdir build
         cp ./*.html ./build/
