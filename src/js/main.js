@@ -6,7 +6,7 @@ import * as d3 from 'd3';
 (async () => {
     const mapElm = document.getElementById('map');
     const updateTimestamp = document.getElementById('update-timestamp');
-    const endemicAreaRes = await fetch('/data/endemic-area.json');
+    const endemicAreaRes = await fetch('./data/endemic-area.json');
     const endemicArea = await endemicAreaRes.json();
 
     updateTimestamp.innerText = `最終更新日時: ${endemicArea.timestamp}`;
@@ -32,7 +32,7 @@ import * as d3 from 'd3';
         .attr('width', '100%')
         .attr('height', '100%');
 
-    const geoJson = await d3.json('/data/japan.geo.json');
+    const geoJson = await d3.json('./data/japan.geo.json');
 
     svg
         .selectAll('path')
