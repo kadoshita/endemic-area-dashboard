@@ -1,3 +1,5 @@
-# endemic-area-dashboard
+# 流行地域ダッシュボード
 
 豊橋技術科学大学の基準での流行地域を表示するダッシュボード
+
+![](screenshot.png)
