@@ -1,4 +1,23 @@
 html, body {
     height: 100%;
     background-color: #fafafa;
+    margin: 0px;
+}
+
+#map-wrap {
+    width: 100%;
+    height: auto;
+}
+
+#map {
+    width: 800px;
+    height: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width:720px) {
+    #map {
+        width: 100%;
+    }
 }
