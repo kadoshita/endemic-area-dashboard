@@ -54,30 +54,49 @@ const PREFECTURE_LIST = [
 const main = async () => {
     const res = await fetch('https://www.tut.ac.jp/info/corona/katudo.html');
     const data = await res.text();
-    const endemicArea = /<li>流行地域<\/li>\n<\/ul>\n<ul class="linklist-s">\n<li>(.*)<\/li>/.exec(data);
-    if (endemicArea.length !== 2) {
-        throw 'response data error';
-    }
 
-    const endemicAreaText = endemicArea[1];
+    if (/<p class="box-midashi" id="ryuko">流行地域について<span class="newicon-text">更新・最終更新日.*<\/span><\/p>/.test(data)) {
+        const endemicArea = /<li>緊急事態宣言対象地域 ＝ 原則，出張・旅行・移動の禁止<\/li>\n<\/ul>\n<ul class="linklist-s">\n<li>(.*)<br>※上記以外の地域への出張・旅行・移動は自粛を求めております。<\/li>/.exec(data);
+        if (endemicArea.length !== 2) {
+            throw 'response data error';
+        }
 
-    const isExcept = /.*を除く都道府県$/.test(endemicAreaText);
+        const areaList = endemicArea[1].split('、');
 
-    let areaList = [];
-    if (isExcept) {
-        const exceptPref = areaList = endemicArea[1].replace('を除く都道府県', '').split('、');
-        areaList = PREFECTURE_LIST.filter(p => !exceptPref.includes(p));
-
+        const timestamp = (new Date()).toLocaleString();
+        await fs.writeFile('./data/endemic-area.json', JSON.stringify({
+            area: areaList,
+            timestamp: timestamp,
+            isDeclaresStateOfEmergency: true
+        }));
+        console.info(`wrote new file.\ntimestamp: ${timestamp}\nendemic area count: ${areaList.length}`);
     } else {
-        areaList = endemicArea[1].split('、');
-    }
+        const endemicArea = /<li>流行地域<\/li>\n<\/ul>\n<ul class="linklist-s">\n<li>(.*)<\/li>/.exec(data);
+        if (endemicArea.length !== 2) {
+            throw 'response data error';
+        }
 
-    const timestamp = (new Date()).toLocaleString();
-    await fs.writeFile('./data/endemic-area.json', JSON.stringify({
-        area: areaList,
-        timestamp: timestamp
-    }));
-    console.info(`wrote new file.\ntimestamp: ${timestamp}\nendemic area count: ${areaList.length}`);
+        const endemicAreaText = endemicArea[1];
+
+        const isExcept = /.*を除く都道府県$/.test(endemicAreaText);
+
+        let areaList = [];
+        if (isExcept) {
+            const exceptPref = areaList = endemicArea[1].replace('を除く都道府県', '').split('、');
+            areaList = PREFECTURE_LIST.filter(p => !exceptPref.includes(p));
+
+        } else {
+            areaList = endemicArea[1].split('、');
+        }
+
+        const timestamp = (new Date()).toLocaleString();
+        await fs.writeFile('./data/endemic-area.json', JSON.stringify({
+            area: areaList,
+            timestamp: timestamp,
+            isDeclaresStateOfEmergency: false
+        }));
+        console.info(`wrote new file.\ntimestamp: ${timestamp}\nendemic area count: ${areaList.length}`);
+    }
 };
 
 main();

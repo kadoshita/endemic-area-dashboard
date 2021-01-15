@@ -11,6 +11,10 @@ import * as d3 from 'd3';
 
     updateTimestamp.innerText = `最終更新日時: ${endemicArea.timestamp}`;
 
+    if (!endemicArea.isDeclaresStateOfEmergency) {
+        document.getElementById('is_declares_state_of_emergency').style.display = 'none';
+    }
+
     mapElm.style.height = `${mapElm.offsetWidth}px`;
     const width = mapElm.offsetWidth;
     const height = mapElm.offsetWidth;
